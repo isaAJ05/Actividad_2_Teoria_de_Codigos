@@ -83,13 +83,13 @@ def matriz_identidad(matriz):
 
 def matriz_generadora_estandar(matriz, q):
     matriz = np.array(matriz)
-    kdim = matriz.shape[0] # Dimension: Número de filas de la matriz
-    for i in range(kdim):
+    k = matriz.shape[0] # Dimension: Número de filas de la matriz
+    for i in range(k):
         # Hacer que el elemento diagonal sea 1
         factor = matriz[i, i]
         if factor == 0:
             # Buscar una fila para intercambiar
-            for k in range(i + 1, kdim):
+            for k in range(i + 1, k):
                 if matriz[k, i] != 0:
                     matriz[[i, k]] = matriz[[k, i]]
                     factor = matriz[i, i]
@@ -99,7 +99,7 @@ def matriz_generadora_estandar(matriz, q):
             matriz[i] = (matriz[i] * pow(factor, -1, q)) % q
         
         # Hacer ceros en la columna i para todas las filas excepto la i-ésima
-        for j in range(kdim):
+        for j in range(k):
             if i != j:
                 factor = matriz[j, i]
                 matriz[j] = (matriz[j] - factor * matriz[i]) % q
@@ -107,29 +107,31 @@ def matriz_generadora_estandar(matriz, q):
 
 def Matriz_Control(matriz, q):
     matriz = np.array(matriz)
-    k = matriz.shape[0] # Dimensión: Número de filas de la matriz
+    k = matriz.shape[0] # DimensiNúmero de filas de la matriz
     # Extraer la parte que está al lado de la matriz identidad
     A = matriz[:, k:]
     # Transponer la parte lateral
     A_transpuesta = A.T
-    # Crear la matriz identidad de tamaño n - k
-    n = matriz.shape[1]  # Longitud: Número de columnas de la matriz original
-    identidad_n_k = np.eye(n - k, dtype=int)
 
-    if (q ==3): # si es ternario
-        A_inverso_ternario = np.zeros_like(A_transpuesta, dtype=int)
+    # Crear la matriz identidad de tamaño (n - número de filas de la matriz)
+    n = matriz.shape[1]  # Número de columnas de la matriz original
+    numero_filas = matriz.shape[0]
+    identidad_n_k = np.eye(n - numero_filas, dtype=int)
+
+    if (q ==3):
+        inverso_ternario = np.zeros_like(A_transpuesta, dtype=int)
         for i in range(A_transpuesta.shape[0]):
             for j in range(A_transpuesta.shape[1]):
                 elemento = int(A_transpuesta[i, j])
                 if elemento == 0:
-                    A_inverso_ternario[i, j] = 0 # si es 0 se queda igual
+                    inverso_ternario[i, j] = 0
                 elif elemento == 1:
-                    A_inverso_ternario[i, j] = 2 # si es 1 se cambia por 2
+                    inverso_ternario[i, j] = 2
                 elif elemento == 2:
-                    A_inverso_ternario[i, j] = 1 # si es 2 se cambia por 1
-        # Unir -A con la matriz identidad n-k
-        matrizdecontrol = np.hstack((A_inverso_ternario, identidad_n_k))
-    else: # si es binario
+                    inverso_ternario[i, j] = 1
+        # Unir la matriz del inverso ternario con la identidad n_k
+        matrizdecontrol = np.hstack((inverso_ternario, identidad_n_k))
+    else: 
         matrizdecontrol = np.hstack((A_transpuesta, identidad_n_k))
     return matrizdecontrol
 

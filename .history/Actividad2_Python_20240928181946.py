@@ -99,7 +99,7 @@ def matriz_generadora_estandar(matriz, q):
             matriz[i] = (matriz[i] * pow(factor, -1, q)) % q
         
         # Hacer ceros en la columna i para todas las filas excepto la i-ésima
-        for j in range(kdim):
+        for j in range(k):
             if i != j:
                 factor = matriz[j, i]
                 matriz[j] = (matriz[j] - factor * matriz[i]) % q

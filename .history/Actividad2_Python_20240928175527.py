@@ -34,22 +34,20 @@ def extension(codewords, q):
 
         codewords[i].append(agregar)
     return codewords
-
 def parametros(matriz, q):
-    n = matriz.shape[1]  # Longitud: Número de columnas de la matriz 
-    k = matriz.shape[0] # Dimension: Número de filas de la matriz 
+    n = matriz.shape[1]  # Número de columnas de la matriz 
+    k = matriz.shape[0] # Número de filas de la matriz 
     codewords_ext = extension(hallar_codewords(matriz, q), q)
     d = float('inf')
     for codeword in codewords_ext:
-        if any(x != 0 for x in codeword):  # Ignorar el vector nulo
-            distancia = sum(1 for x in codeword if x != 0) # Contar los elementos no nulos
-            if distancia < d: # Actualizar la distancia mínima
-                d = distancia
-    res = [n+1, k, d] # parametros del codigo extendido
-    if q==2: # si es binario
-        if d%2 != 0: # si la distancia es impar
-            d= d+1 # se le suma 1
-            res= [n+1, k, d] 
+        distancia = sum(1 for x in codeword if x != 0)
+        if distancia < d:
+            d = distancia
+    if n%2 != 0:
+        d= d+1
+        res= [n+1, k, d] 
+    else:
+        res= [n+1, k, d]
     return res
     
 def reduccion_perforacion(codewords, rp, lim_inf, lim_sup):
@@ -81,56 +79,58 @@ def matriz_identidad(matriz):
     identidad = np.eye(matriz.shape[0], dtype=int)
     return identidad
 
-def matriz_generadora_estandar(matriz, q):
-    matriz = np.array(matriz)
-    kdim = matriz.shape[0] # Dimension: Número de filas de la matriz
-    for i in range(kdim):
+def matriz_generadora_estandar(matriz_1, q):
+    matriz_1 = np.array(matriz_1)
+    tamano = matriz_1.shape[0]
+    for i in range(tamano):
         # Hacer que el elemento diagonal sea 1
-        factor = matriz[i, i]
+        factor = matriz_1[i, i]
         if factor == 0:
             # Buscar una fila para intercambiar
-            for k in range(i + 1, kdim):
-                if matriz[k, i] != 0:
-                    matriz[[i, k]] = matriz[[k, i]]
-                    factor = matriz[i, i]
+            for k in range(i + 1, tamano):
+                if matriz_1[k, i] != 0:
+                    matriz_1[[i, k]] = matriz_1[[k, i]]
+                    factor = matriz_1[i, i]
                     break
         if factor != 0:
             factor = int(factor)  # Convertir a tipo de datos estándar de Python
-            matriz[i] = (matriz[i] * pow(factor, -1, q)) % q
+            matriz_1[i] = (matriz_1[i] * pow(factor, -1, q)) % q
         
         # Hacer ceros en la columna i para todas las filas excepto la i-ésima
-        for j in range(kdim):
+        for j in range(tamano):
             if i != j:
-                factor = matriz[j, i]
-                matriz[j] = (matriz[j] - factor * matriz[i]) % q
-    return matriz
+                factor = matriz_1[j, i]
+                matriz_1[j] = (matriz_1[j] - factor * matriz_1[i]) % q
+    return matriz_1
 
-def Matriz_Control(matriz, q):
-    matriz = np.array(matriz)
-    k = matriz.shape[0] # Dimensión: Número de filas de la matriz
+def Matriz_Control(matriz_1, q):
+    matriz_1 = np.array(matriz_1)
+    tamano = matriz_1.shape[0]
     # Extraer la parte que está al lado de la matriz identidad
-    A = matriz[:, k:]
+    parte_lateral = matriz_1[:, tamano:]
     # Transponer la parte lateral
-    A_transpuesta = A.T
-    # Crear la matriz identidad de tamaño n - k
-    n = matriz.shape[1]  # Longitud: Número de columnas de la matriz original
-    identidad_n_k = np.eye(n - k, dtype=int)
+    parte_lateral_transpuesta = parte_lateral.T
 
-    if (q ==3): # si es ternario
-        A_inverso_ternario = np.zeros_like(A_transpuesta, dtype=int)
-        for i in range(A_transpuesta.shape[0]):
-            for j in range(A_transpuesta.shape[1]):
-                elemento = int(A_transpuesta[i, j])
+    # Crear la matriz identidad de tamaño (n - número de filas de la matriz)
+    n = matriz_1.shape[1]  # Número de columnas de la matriz original
+    numero_filas = matriz_1.shape[0]
+    identidad_n_k = np.eye(n - numero_filas, dtype=int)
+
+    if (q ==3):
+        inverso_ternario = np.zeros_like(parte_lateral_transpuesta, dtype=int)
+        for i in range(parte_lateral_transpuesta.shape[0]):
+            for j in range(parte_lateral_transpuesta.shape[1]):
+                elemento = int(parte_lateral_transpuesta[i, j])
                 if elemento == 0:
-                    A_inverso_ternario[i, j] = 0 # si es 0 se queda igual
+                    inverso_ternario[i, j] = 0
                 elif elemento == 1:
-                    A_inverso_ternario[i, j] = 2 # si es 1 se cambia por 2
+                    inverso_ternario[i, j] = 2
                 elif elemento == 2:
-                    A_inverso_ternario[i, j] = 1 # si es 2 se cambia por 1
-        # Unir -A con la matriz identidad n-k
-        matrizdecontrol = np.hstack((A_inverso_ternario, identidad_n_k))
-    else: # si es binario
-        matrizdecontrol = np.hstack((A_transpuesta, identidad_n_k))
+                    inverso_ternario[i, j] = 1
+        # Unir la matriz del inverso ternario con la identidad n_k
+        matrizdecontrol = np.hstack((inverso_ternario, identidad_n_k))
+    else: 
+        matrizdecontrol = np.hstack((parte_lateral_transpuesta, identidad_n_k))
     return matrizdecontrol
 
 print("\nPRIMER EJERCICIO")
@@ -141,7 +141,7 @@ codewords = hallar_codewords(matriz_1, q_1)
 print(codewords)
 print("\nCodewords del código C extendido:")
 print(extension(codewords, q_1))
-print("\nParámetros del código C extendido:")
+print("\nParámetros del código C:")
 print(parametros(np.array(matriz_1), q_1))
 print("\nCodewords del código C reducido:")
 reduccion_perforacion(codewords, 1, 1, 6)
@@ -159,8 +159,8 @@ hallar_codewords(matriz_2, q_2)
 print(codewords)
 print("\nCodewords del código C extendido:")
 print(extension(codewords, q_2))
-print("\nParámetros del código C extendido:") 
-print(parametros(np.array(matriz_2), q_2))
+print("\nParámetros del código C:") 
+
 print("\nCodewords del código C reducido:")
 reduccion_perforacion(codewords, 1, 1, 3)
 print("\nCodewords del código C perforado:")
