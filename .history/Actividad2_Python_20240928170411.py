@@ -101,7 +101,7 @@ def Matriz_Control(matriz_1, q):
     numero_filas = matriz_1.shape[0]
     identidad_n_k = np.eye(n - numero_filas, dtype=int)
 
-    if (q ==3):
+    if q == 3:
         inverso_ternario = np.zeros_like(parte_lateral_transpuesta, dtype=int)
         for i in range(parte_lateral_transpuesta.shape[0]):
             for j in range(parte_lateral_transpuesta.shape[1]):
@@ -114,9 +114,12 @@ def Matriz_Control(matriz_1, q):
                     inverso_ternario[i, j] = 1
         # Unir la matriz del inverso ternario con la identidad n_k
         matrizdecontrol = np.hstack((inverso_ternario, identidad_n_k))
-    else: 
+    else:
         matrizdecontrol = np.hstack((parte_lateral_transpuesta, identidad_n_k))
-    return matrizdecontrol
+    
+    # Convertir la matriz a una cadena de texto para una mejor visualización
+    matriz_str = "\n".join(["\t".join(map(str, fila)) for fila in matrizdecontrol])
+    return matriz_str
 
 print("\nPRIMER EJERCICIO")
 matriz_1 = [[2, 1, 0, 0, 1, 1], [1, 0, 2, 2, 1, 0],[0, 1, 0, 0, 2, 1]]

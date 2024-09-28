@@ -112,6 +112,7 @@ def Matriz_Control(matriz_1, q):
                     inverso_ternario[i, j] = 2
                 elif elemento == 2:
                     inverso_ternario[i, j] = 1
+        print("Este es el inverso ternario: \n", inverso_ternario)
         # Unir la matriz del inverso ternario con la identidad n_k
         matrizdecontrol = np.hstack((inverso_ternario, identidad_n_k))
     else: 
@@ -130,9 +131,6 @@ print("\nCodewords del código C reducido:")
 reduccion_perforacion(codewords, 1, 1, 6)
 print("\nCodewords del código C perforado:")
 reduccion_perforacion(codewords, 2, 1, 6)
-matrizgeneradora_estandar = matriz_generadora_estandar(matriz_1, q_1)
-matrizdeControl = Matriz_Control(matrizgeneradora_estandar, q_1)
-print("\nMatriz de Control H: \n", matrizdeControl)
 
 print("\nSEGUNDO EJERCICIO")
 matriz_2 = [[1, 0, 0, 1, 0, 1, 0], [0, 1, 0, 1, 1, 0, 1], [0, 0, 1, 1, 0, 0, 1]]
@@ -146,6 +144,3 @@ print("\nCodewords del código C reducido:")
 reduccion_perforacion(codewords, 1, 1, 3)
 print("\nCodewords del código C perforado:")
 reduccion_perforacion(codewords, 2, 1, 3)
-matrizgeneradora_estandar = matriz_generadora_estandar(matriz_2, q_2)
-matrizdeControl = Matriz_Control(matrizgeneradora_estandar, q_2)
-print("\nMatriz de Control H: \n", matrizdeControl)

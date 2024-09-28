@@ -93,13 +93,16 @@ def Matriz_Control(matriz_1, q):
     tamano = matriz_1.shape[0]
     # Extraer la parte que está al lado de la matriz identidad
     parte_lateral = matriz_1[:, tamano:]
+    print("Esta es la parte lateral: \n" , parte_lateral)
     # Transponer la parte lateral
     parte_lateral_transpuesta = parte_lateral.T
+    print("Esta es la parte lateral traspuesta: \n" , parte_lateral_transpuesta)
 
     # Crear la matriz identidad de tamaño (n - número de filas de la matriz)
     n = matriz_1.shape[1]  # Número de columnas de la matriz original
     numero_filas = matriz_1.shape[0]
     identidad_n_k = np.eye(n - numero_filas, dtype=int)
+    print ("Esta es la identidad: \n" , identidad_n_k)
 
     if (q ==3):
         inverso_ternario = np.zeros_like(parte_lateral_transpuesta, dtype=int)
@@ -112,6 +115,7 @@ def Matriz_Control(matriz_1, q):
                     inverso_ternario[i, j] = 2
                 elif elemento == 2:
                     inverso_ternario[i, j] = 1
+        print("Este es el inverso ternario: \n", inverso_ternario)
         # Unir la matriz del inverso ternario con la identidad n_k
         matrizdecontrol = np.hstack((inverso_ternario, identidad_n_k))
     else: 
@@ -130,9 +134,6 @@ print("\nCodewords del código C reducido:")
 reduccion_perforacion(codewords, 1, 1, 6)
 print("\nCodewords del código C perforado:")
 reduccion_perforacion(codewords, 2, 1, 6)
-matrizgeneradora_estandar = matriz_generadora_estandar(matriz_1, q_1)
-matrizdeControl = Matriz_Control(matrizgeneradora_estandar, q_1)
-print("\nMatriz de Control H: \n", matrizdeControl)
 
 print("\nSEGUNDO EJERCICIO")
 matriz_2 = [[1, 0, 0, 1, 0, 1, 0], [0, 1, 0, 1, 1, 0, 1], [0, 0, 1, 1, 0, 0, 1]]
@@ -146,6 +147,3 @@ print("\nCodewords del código C reducido:")
 reduccion_perforacion(codewords, 1, 1, 3)
 print("\nCodewords del código C perforado:")
 reduccion_perforacion(codewords, 2, 1, 3)
-matrizgeneradora_estandar = matriz_generadora_estandar(matriz_2, q_2)
-matrizdeControl = Matriz_Control(matrizgeneradora_estandar, q_2)
-print("\nMatriz de Control H: \n", matrizdeControl)
