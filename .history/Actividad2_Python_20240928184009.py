@@ -1,6 +1,6 @@
-#PAULA NUÑEZ E ISABELLA ARRIETA
 import numpy as np 
 from itertools import product
+
 
 def hallar_codewords(matriz, q):
     k = len(matriz)

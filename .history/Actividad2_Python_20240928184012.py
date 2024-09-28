@@ -1,4 +1,4 @@
-#PAULA NUÑEZ E ISABELLA ARRIETA
+
 import numpy as np 
 from itertools import product
 
