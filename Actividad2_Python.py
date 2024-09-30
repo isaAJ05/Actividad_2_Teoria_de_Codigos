@@ -2,35 +2,35 @@
 import numpy as np 
 from itertools import product
 
-def hallar_codewords(matriz, q):
-    k = len(matriz)
-    v = []
-    for i in range(q):
+def hallar_codewords(matriz, q): # Hallar los codewords a partir de la matriz generadora
+    k = len(matriz) # Número de filas
+    v = [] 
+    for i in range(q): # Vector de 0 a q-1 para sacar las combinaciones lineales
         v.append(i)
-    combinaciones = list(product(v, repeat=k))
+    combinaciones = list(product(v, repeat=k)) # Combinaciones de los elementos de v
 
     codewords = []
-    for U in combinaciones:
-        U = np.array(U)
-        codeword = np.dot(U, matriz) % q 
-        codewords.append(codeword.tolist())
+    for U in combinaciones: # Multiplicar las combinaciones por la matriz generadora
+        U = np.array(U) 
+        codeword = np.dot(U, matriz) % q # Producto punto y módulo q para Fq
+        codewords.append(codeword.tolist()) # Agregar a la lista de codewords
     return codewords
 
 
-def extension(codewords, q):
-    for i in range(len(codewords)):
-        codewords[i] = list(codewords[i])
-        suma = sum(codewords[i])
-        if suma%q==0:
+def extension(codewords, q): # Extensión del código
+    for i in range(len(codewords)): # Recorrer los codewords
+        codewords[i] = list(codewords[i]) 
+        suma = sum(codewords[i]) # Suma de los elementos de cada codeword
+        if suma%q==0: # Si la suma es 0 en Fq, agregar 0
             agregar = 0
         else:
-            if q==3:
+            if q==3: # Agregar 1 o 2 si la suma no es 0 en código ternario dependiendo del resultado
                 if suma%q==1:
                     agregar = 2
                 elif suma%q==2:
                     agregar = 1
-            elif q==2:
-                agregar = 1
+            elif q==2: # Agregar 1 si la suma no es 0 en código binario
+                agregar = 1 
 
         codewords[i].append(agregar)
     return codewords
@@ -52,29 +52,28 @@ def parametros(matriz, q):
             res= [n+1, k, d] 
     return res
     
-def reduccion_perforacion(codewords, rp, lim_inf, lim_sup):
-    for i in range(lim_inf-1, lim_sup):
+def reduccion_perforacion(codewords, rp, lim_inf, lim_sup): # Función para reducción y perforación
+    for i in range(lim_inf-1, lim_sup): # Hacer para cada i dentro de 1<=i<=lim_sup
         redperf_por_i=[]
         print(f'\ni = {i+1}')
-        for j in range(len(codewords)):
-            codeword = codewords[j]
-            codeword_nuevo = cambio_redperf(codeword[:], rp, i)
+        for j in range(len(codewords)): # Recorrer los codewords
+            codeword = codewords[j] 
+            codeword_nuevo = cambio_redperf(codeword[:], rp, i) # Llama la función respectiva para hacer el cambio
             if codeword_nuevo != None:
-                redperf_por_i.append(codeword_nuevo)
-                print(codeword_nuevo)
+                redperf_por_i.append(codeword_nuevo) # Agregar el codeword nuevo a la lista
+        print(' '.join(str(codeword) for codeword in redperf_por_i)) # Imprimir los codewords
         
 def cambio_redperf(codeword, rp, i):
-    if rp == 1: # ya no se si entendi la reduccion :(
-        
-        if i < len(codeword) and codeword[i] == 0:
+    if rp == 1: # Reducción
+        if codeword[i] == 0: # Eliminar el elemento en la posición i si es igual a 0
             codeword.pop(i)
             codeword.pop()
             return codeword
         else:
-            return None
+            return None # Si no se cumple la condición se ignora
         
-    elif rp == 2:
-        codeword.pop(i)
+    elif rp == 2: # Perforación
+        codeword.pop(i) # Eliminar el elemento en la posición i
         codeword.pop()
         return codeword
 
@@ -131,39 +130,41 @@ def Matriz_Control(matriz, q):
         matrizdecontrol = np.hstack((A_transpuesta, identidad_n_k))
     return matrizdecontrol
 
-print("\nPRIMER EJERCICIO")
+# LLAMAR FUNCIONES PARA LOS RESPECTIVOS EJERCICIOS
+print("\n[ACTIVIDAD 2 - TEORÍA DE CÓDIGOS]\nPor: Paula Nuñez e Isabella Arrieta")
+print("\n**[PRIMER EJERCICIO]**")
 matriz_1 = [[2, 1, 0, 0, 1, 1], [1, 0, 2, 2, 1, 0],[0, 1, 0, 0, 2, 1]]
 q_1 = 3
-print("\nCodewords del código C:")
+print("\n→ Codewords del código C:")
 codewords = hallar_codewords(matriz_1, q_1)
 print(codewords)
-print("\nCodewords del código C extendido:")
+print("\n→ Codewords del código C extendido:")
 print(extension(codewords, q_1))
-print("\nParámetros del código C extendido:")
+print("\n→ Parámetros del código C extendido:")
 print(parametros(np.array(matriz_1), q_1))
-print("\nCodewords del código C reducido:")
+print("\n→ Codewords del código C reducido:")
 reduccion_perforacion(codewords, 1, 1, 6)
-print("\nCodewords del código C perforado:")
+print("\n→ Codewords del código C perforado:")
 reduccion_perforacion(codewords, 2, 1, 6)
 matrizgeneradora_estandar = matriz_generadora_estandar(matriz_1, q_1)
 matrizdeControl = Matriz_Control(matrizgeneradora_estandar, q_1)
-print("\nMatriz de Control H: \n", matrizdeControl)
+print("\n→ Matriz de Control H: \n", matrizdeControl)
 
-print("\nSEGUNDO EJERCICIO")
+print("\n**[SEGUNDO EJERCICIO]**")
 matriz_2 = [[1, 0, 0, 1, 0, 1, 0], [0, 1, 0, 1, 1, 0, 1], [0, 0, 1, 1, 0, 0, 1]]
 q_2 = 2
-print("\nCodewords del código C:")
+print("\n→ Codewords del código C:")
 hallar_codewords(matriz_2, q_2)
 codewords = hallar_codewords(matriz_2, q_2)
 print(codewords)
-print("\nCodewords del código C extendido:")
+print("\n→ Codewords del código C extendido:")
 print(extension(codewords, q_2))
-print("\nParámetros del código C extendido:") 
+print("\n→ Parámetros del código C extendido:") 
 print(parametros(np.array(matriz_2), q_2))
-print("\nCodewords del código C reducido:")
+print("\n→ Codewords del código C reducido:")
 reduccion_perforacion(codewords, 1, 1, 3)
-print("\nCodewords del código C perforado:")
+print("\n→ Codewords del código C perforado:")
 reduccion_perforacion(codewords, 2, 1, 3)
 matrizgeneradora_estandar = matriz_generadora_estandar(matriz_2, q_2)
 matrizdeControl = Matriz_Control(matrizgeneradora_estandar, q_2)
-print("\nMatriz de Control H: \n", matrizdeControl)
+print("\n→ Matriz de Control H: \n", matrizdeControl)
