@@ -12,9 +12,8 @@ def hallar_codewords(matriz, q):
     codewords = []
     for U in combinaciones:
         U = np.array(U)
-        codeword = np.dot(U, matriz) % q
+        codeword = np.dot(U, matriz) % q 
         codewords.append(codeword.tolist())
-
     return codewords
 
 
@@ -69,18 +68,16 @@ def cambio_redperf(codeword, rp, i):
         
         if i < len(codeword) and codeword[i] == 0:
             codeword.pop(i)
+            codeword.pop()
             return codeword
         else:
             return None
         
     elif rp == 2:
         codeword.pop(i)
+        codeword.pop()
         return codeword
 
-def matriz_identidad(matriz):
-    matriz = np.array(matriz)
-    identidad = np.eye(matriz.shape[0], dtype=int)
-    return identidad
 
 def matriz_generadora_estandar(matriz, q):
     matriz = np.array(matriz)
@@ -157,6 +154,7 @@ matriz_2 = [[1, 0, 0, 1, 0, 1, 0], [0, 1, 0, 1, 1, 0, 1], [0, 0, 1, 1, 0, 0, 1]]
 q_2 = 2
 print("\nCodewords del código C:")
 hallar_codewords(matriz_2, q_2)
+codewords = hallar_codewords(matriz_2, q_2)
 print(codewords)
 print("\nCodewords del código C extendido:")
 print(extension(codewords, q_2))
